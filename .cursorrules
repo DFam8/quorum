@@ -1,0 +1,75 @@
+# Quorum — Cursor coding rules
+
+## Project
+- Name: Quorum
+- Stack: Nuxt 3, Vue 3, TypeScript, tRPC, Drizzle ORM, PostgreSQL (Supabase), Radix Vue, Tiptap
+- Styling: Scoped component CSS only. Never Tailwind. Never inline styles except for dynamic values.
+- All CSS values must reference tokens from assets/tokens.css via var(--token-name).
+
+## TypeScript
+- Strict mode always on.
+- No `any` types. Use `unknown` and narrow.
+- Always type function return values explicitly.
+- Prefer `type` over `interface` unless extending.
+- Use Zod for all input validation on tRPC procedures.
+
+## Vue components
+- Composition API only. Never Options API.
+- Always use `<script setup lang="ts">`.
+- Props defined with `defineProps<{}>()` — typed, never untyped.
+- Emits defined with `defineEmits<{}>()`.
+- Keep components focused. If a component exceeds ~150 lines, split it.
+
+## Component naming
+- Base primitives: `Base` prefix — `BaseButton.vue`, `BaseInput.vue`, `BaseModal.vue`
+- Layout singletons: `The` prefix — `TheSidebar.vue`, `TheNavbar.vue`
+- Feature components: descriptive noun — `MeetingCard.vue`, `AnnouncementFeed.vue`
+- Pages: lowercase with hyphens matching the route — `meeting-detail.vue`
+
+## Composables
+- `use` prefix always — `useAuth.ts`, `useToast.ts`
+- Return reactive state and functions. Never return raw refs without wrapping.
+- Side effects (API calls, subscriptions) go in composables, not components.
+
+## tRPC routers
+- One router file per domain (announcements, meetings, messages, etc.)
+- All procedures use Zod input validation.
+- Protect procedures with middleware: `publicProcedure`, `authedProcedure`, `boardProcedure`, `superAdminProcedure`.
+- Never query the DB directly from a page or component. Always go through tRPC.
+
+## Drizzle ORM
+- Schema lives in server/db/schema.ts.
+- Use snake_case for all column names.
+- Always define relations explicitly.
+- Never use raw SQL unless Drizzle cannot express the query.
+
+## Permissions
+- Never check roles inline in components with string comparisons.
+- Always use helpers from utils/permissions.ts — `isBoard(user)`, `isSuperAdmin(user)`, `canEdit(user, resource)`.
+- Board-only UI is hidden entirely (v-if), never just disabled.
+
+## Styling
+- Scoped styles in every component: `<style scoped>`.
+- Use CSS custom properties from tokens.css for all colors, spacing, typography, and radii.
+- No hardcoded hex values, pixel values, or font sizes outside the token file.
+- Two font weights only: 400 (normal) and 500 (medium). Never 600 or 700.
+- No box shadows except --shadow-focus on focus rings.
+- No gradients except --gradient-brand and --gradient-brand-subtle, used only on logo mark and primary CTA button.
+- No glassmorphism, blur, or transparency effects.
+
+## Error handling
+- All tRPC procedures wrapped in try/catch. Throw TRPCError with appropriate code.
+- Client-side errors surfaced via useToast composable, never console.log only.
+- Form validation errors shown inline under the relevant field.
+
+## Accessibility
+- All interactive elements must have visible focus styles using --shadow-focus.
+- Minimum touch target 44×44px for all buttons and interactive elements.
+- Radix Vue handles ARIA — do not add redundant aria-* attributes on Radix primitives.
+- Images always have alt text. Decorative images use alt="".
+
+## AI assist (server/trpc/routers/ai.ts)
+- All Claude API calls go through the ai router. Never call the Anthropic API directly from the client.
+- Always pass message type and recipient context in the system prompt.
+- Always log ai_assisted, ai_mode, ai_tone, ai_input, ai_input_type to the relevant table.
+- Use zero data retention headers on all Anthropic API calls.

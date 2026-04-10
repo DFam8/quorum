@@ -1,0 +1,1 @@
+ALTER TABLE "announcement" ADD COLUMN "edit_history" jsonb DEFAULT '[]'::jsonb;
