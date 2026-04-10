@@ -10,6 +10,7 @@ const notificationSettingsSchema = z.object({
   emailAnnouncements: z.boolean().optional(),
   emailMeetings: z.boolean().optional(),
   emailMessages: z.boolean().optional(),
+  bottomNav: z.array(z.string()).length(3).optional(),
 })
 
 const updateProfileSchema = z.object({
