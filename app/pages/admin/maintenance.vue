@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { isBoardMember } from '~/utils/permissions'
+import { isBoardMember } from '../../../utils/permissions'
 definePageMeta({ middleware: 'auth' })
 
 const api = useApi()
